@@ -3,5 +3,6 @@
   function = "abtest"
 
 [dev]
-  framework = "gatsby"
+  command = "npm run develop"
   publish = "public"
+  targetPort = 8000
