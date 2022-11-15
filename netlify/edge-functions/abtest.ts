@@ -23,7 +23,7 @@ export default async (request: Request, context: Context) => {
     });
   }
 
-  const rewritePage = bucket === 'a' ? '/home-a/' : '/home-b/'
+  const rewritePage = bucket === 'a' ? '/home-a' : '/home-b'
 
   return context.rewrite(rewritePage)
 };
