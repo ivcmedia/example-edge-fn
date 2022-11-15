@@ -1,0 +1,7 @@
+[[edge_functions]]
+  path = "/"
+  function = "abtest"
+
+[dev]
+  framework = "gatsby"
+  publish = "public"
