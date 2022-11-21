@@ -20,6 +20,7 @@ export default (request: Request, context: Context) => {
     context.cookies.set({
       name: bucketName,
       value: bucket,
+      maxAge: 365 * 24 * 60 * 60,
     });
   }
 
