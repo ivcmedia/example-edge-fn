@@ -1,0 +1,18 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch",
+      "type": "firefox",
+      "request": "attach",
+      "url": "http://localhost:8888/",
+      "webRoot": "${workspaceFolder}/public",
+      "pathMappings": [
+        {
+          "url": "webpack://example-edge-fn/.cache/*",
+          "path": "${workspaceFolder}/node_modules/gatsby/cache-dir/*"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,150 @@
+diff --git a/node_modules/gatsby/cache-dir/ensure-resources.js b/node_modules/gatsby/cache-dir/ensure-resources.js
+index b1880c9..c302c29 100644
+--- a/node_modules/gatsby/cache-dir/ensure-resources.js
++++ b/node_modules/gatsby/cache-dir/ensure-resources.js
+@@ -38,7 +38,9 @@ class EnsureResources extends React.Component {
+ 
+   loadResources(rawPath) {
+     loader.loadPage(rawPath).then(pageResources => {
++      console.log('page resources loaded')
+       if (pageResources && pageResources.status !== PageResourceStatus.Error) {
++        
+         this.setState({
+           location: { ...window.location },
+           pageResources,
+diff --git a/node_modules/gatsby/cache-dir/find-path.js b/node_modules/gatsby/cache-dir/find-path.js
+index a231735..62f7538 100644
+--- a/node_modules/gatsby/cache-dir/find-path.js
++++ b/node_modules/gatsby/cache-dir/find-path.js
+@@ -54,6 +54,53 @@ export const setMatchPaths = value => {
+   matchPaths = value
+ }
+ 
++if (typeof String.prototype.trimLeft !== "function") {
++  String.prototype.trimLeft = function() {
++      return this.replace(/^\s+/, "");
++  };
++}
++if (typeof String.prototype.trimRight !== "function") {
++  String.prototype.trimRight = function() {
++      return this.replace(/\s+$/, "");
++  };
++}
++if (typeof Array.prototype.map !== "function") {
++  Array.prototype.map = function(callback, thisArg) {
++      for (var i=0, n=this.length, a=[]; i<n; i++) {
++          if (i in this) a[i] = callback.call(thisArg, this[i]);
++      }
++      return a;
++  };
++}
++function getCookies() {
++  var c = document.cookie, v = 0, cookies = {};
++  if (document.cookie.match(/^\s*\$Version=(?:"1"|1);\s*(.*)/)) {
++      c = RegExp.$1;
++      v = 1;
++  }
++  if (v === 0) {
++      c.split(/[,;]/).map(function(cookie) {
++          var parts = cookie.split(/=/, 2),
++              name = decodeURIComponent(parts[0].trimLeft()),
++              value = parts.length > 1 ? decodeURIComponent(parts[1].trimRight()) : null;
++          cookies[name] = value;
++      });
++  } else {
++      c.match(/(?:^|\s+)([!#$%&'*+\-.0-9A-Z^`a-z|~]+)=([!#$%&'*+\-.0-9A-Z^`a-z|~]*|"(?:[\x20-\x7E\x80\xFF]|\\[\x00-\x7F])*")(?=\s*[,;]|$)/g).map(function($0, $1) {
++          var name = $0,
++              value = $1.charAt(0) === '"'
++                        ? $1.substr(1, -1).replace(/\\(.)/g, "$1")
++                        : $1;
++          cookies[name] = value;
++      });
++  }
++  return cookies;
++}
++
++function getCookie(name) {
++  return getCookies()[name];
++}
++
+ /**
+  * Return a matchpath url
+  * if `match-paths.json` contains `{ "/foo*": "/page1", ...}`, then
+@@ -134,6 +181,28 @@ export const findPath = rawPathname => {
+     foundPath = cleanPath(rawPathname)
+   }
+ 
++  console.log('rp', rawPathname)
++
++  if (rawPathname === '/') {
++    const cv = getCookie('test_bucket')
++    if (cv === 'a') {
++      foundPath = '/home-a'
++    }
++    if (cv === 'b') {
++      foundPath = '/home-b'
++    }
++  }
++
++  if (rawPathname === '/home-a') {
++    foundPath = '/home-a'
++  }
++
++  if (rawPathname === '/home-b') {
++    foundPath = '/home-b'
++  }
++
++  console.log('fp', foundPath)
++
+   pathCache.set(trimmedPathname, foundPath)
+ 
+   return foundPath
+diff --git a/node_modules/gatsby/cache-dir/root.js b/node_modules/gatsby/cache-dir/root.js
+index 66c034d..dea9842 100644
+--- a/node_modules/gatsby/cache-dir/root.js
++++ b/node_modules/gatsby/cache-dir/root.js
+@@ -32,11 +32,14 @@ class LocationHandler extends React.Component {
+   render() {
+     const { location } = this.props
+ 
++    console.log('loader not found', loader.isPageNotFound(location.pathname + location.search))
++
+     if (!loader.isPageNotFound(location.pathname + location.search)) {
+       return (
+         <EnsureResources location={location}>
+           {locationAndPageResources => (
+             <RouteUpdates location={location}>
++              {console.log('location and pageResources', locationAndPageResources) && <></>}
+               <ScrollContext
+                 location={location}
+                 shouldUpdateScroll={shouldUpdateScroll}
+diff --git a/node_modules/gatsby/dist/utils/find-page-by-path.js b/node_modules/gatsby/dist/utils/find-page-by-path.js
+index 0dd6444..e19402e 100644
+--- a/node_modules/gatsby/dist/utils/find-page-by-path.js
++++ b/node_modules/gatsby/dist/utils/find-page-by-path.js
+@@ -17,6 +17,8 @@ var _utils = require("@gatsbyjs/reach-router/lib/utils");
+ // In the future, we could move this pagesByMatchPath computation outside this
+ // function and save some processing power
+ const findBestMatchingPage = (pages, path) => {
++  console.log('findBestMatchingPage', pages, path)
++  
+   // Pick only routes with matchPath for better performance.
+   // Exact match should have already been checked
+   const pagesByMatchPath = {};
+@@ -38,6 +40,7 @@ const findBestMatchingPage = (pages, path) => {
+   const picked = (0, _utils.pick)(routes, path);
+ 
+   if (picked) {
++    console.log('findBestMatchingPage', pages, path, pagesByMatchPath[picked.route.path])
+     return pagesByMatchPath[picked.route.path];
+   }
+ 
+@@ -45,6 +48,8 @@ const findBestMatchingPage = (pages, path) => {
+ };
+ 
+ function findPageByPath(state, path, fallbackTo404 = false) {
++  console.log('findPageByPath', state, path)
++  
+   const {
+     pages
+   } = state;

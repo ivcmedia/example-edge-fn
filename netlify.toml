@@ -3,6 +3,5 @@
   function = "abtest"
 
 [dev]
-  command = "npm run develop"
+  framework = "#static"
   publish = "public"
-  targetPort = 8000
