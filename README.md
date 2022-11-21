@@ -6,4 +6,4 @@ This repo uses Gatsby + Netlify Edge Functions to exemplify an Edge A/B testing 
 - Clone the repo locally
 - Setup `netlify-cli` npm package
 - Build the Gatsby site (`npm run build`)
-- Run `netlify dev` to host the Netlify Edge Function and point it to the static Gatsby site
+- Run `netlify dev` to host the Netlify Edge Function and point it to the static Gatsby site (see `netlify.toml` file)
