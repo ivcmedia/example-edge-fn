@@ -33,12 +33,13 @@ export default (request: Request, context: Context) => {
   if (parsedUrl.pathname === '/') {
     rewritePage = bucket === 'a' ? '/home-a/' : '/home-b/'
   }
-
-  console.log(`${parsedUrl.pathname} -> ${rewritePage}`)
+  
   // We shouldn't be rewriting this request, return Next response
   if (rewritePage === null) {
     return context.next()
   }
+
+  console.log(`Rewriting request for ${parsedUrl.pathname} to ${rewritePage}`)
 
   return context.rewrite(rewritePage)
 };
