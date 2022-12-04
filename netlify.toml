@@ -2,6 +2,14 @@
   path = "/"
   function = "abtest"
 
+[[edge_functions]]
+  path = "/page-data/home-a/page-data.json"
+  function = "abtest"
+
+[[edge_functions]]
+  path = "/page-data/home-b/page-data.json"
+  function = "abtest"
+
 [dev]
   framework = "#static"
   publish = "public"

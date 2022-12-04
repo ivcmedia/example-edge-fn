@@ -24,7 +24,21 @@ export default (request: Request, context: Context) => {
     });
   }
 
-  const rewritePage = bucket === 'a' ? '/home-a/' : '/home-b/'
-  
+  // Determine rewrite path
+  let rewritePage: string | null = null
+  const parsedUrl = new URL(request.url)
+  if (/\/page-data\/home-(a|b)\/page-data\.json/.test(parsedUrl.pathname)) {
+    rewritePage = bucket === 'a' ? '/page-data/home-a/page-data.json' : '/page-data/home-b/page-data.json'
+  }
+  if (parsedUrl.pathname === '/') {
+    rewritePage = bucket === 'a' ? '/home-a/' : '/home-b/'
+  }
+
+  console.log(`${parsedUrl.pathname} -> ${rewritePage}`)
+  // We shouldn't be rewriting this request, return Next response
+  if (rewritePage === null) {
+    return context.next()
+  }
+
   return context.rewrite(rewritePage)
 };
